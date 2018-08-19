@@ -42,6 +42,31 @@ class Note {
 
 }
 
+const defaultModel = {
+  type: 'gain',
+  envelope: {
+    type: 'level',
+    expression: {
+      type: 'variable',
+      name: '@velocity'
+    }
+  },
+  modulators: [],
+  children: [{
+    type: 'oscillator',
+    waveType: 'square',
+    envelope: {
+      type: 'frequency',
+      expression: {
+        type: 'variable',
+        name: '@frequency'
+      }
+    },
+    modulators: []
+  }],
+};
+
 module.exports = {
-  SynthBuilder
+  SynthBuilder,
+  defaultModel
 };

@@ -1,7 +1,5 @@
-const {SynthBuilder} = require('../../dist/index.js');
-
 const ac = new AudioContext();
-const sb = new SynthBuilder(ac);
+const sb = new fcsynth.SynthBuilder(ac);
 const synth = sb.build();
 const note = synth.note({
   frequency: 440,
