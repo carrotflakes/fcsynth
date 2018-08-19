@@ -4,23 +4,27 @@ class SynthBuilder {
     this.ac = ac;
   }
 
-  build(model) {
-    return new Synth(this.ac, model);
+  build(model, destination) {
+    destination = destination || this.ac.destination;
+    return new Synth(this.ac, destination, model);
   }
 
 }
 
 class Synth {
 
-  constructor(ac, model) {
+  constructor(ac, destination, model) {
     this.ac = ac;
+    this.destination = destination;
     this.model = model;
   }
 
   note(opt) {
     // build nodes
     const osc = this.ac.createOscillator();
-    osc.connect(this.ac.destination);
+    const gain = this.ac.createGain();
+    osc.connect(gain);
+    gain.connect(this.destination);
     return new Note(osc);
   }
 
@@ -47,7 +51,7 @@ const defaultModel = {
   envelope: {
     type: 'level',
     expression: {
-      type: 'variable',
+      type: 'identifier',
       name: '@velocity'
     }
   },
@@ -58,7 +62,7 @@ const defaultModel = {
     envelope: {
       type: 'frequency',
       expression: {
-        type: 'variable',
+        type: 'identifier',
         name: '@frequency'
       }
     },
