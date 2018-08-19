@@ -103,7 +103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("console.log('hoge');\n\n\n//# sourceURL=webpack://fcsynth/./src/index.js?");
+eval("class SynthBuilder {\n\n  constructor(ac) {\n    this.ac = ac;\n  }\n\n  build(model) {\n    return new Synth(this.ac, model);\n  }\n\n}\n\nclass Synth {\n\n  constructor(ac, model) {\n    this.ac = ac;\n    this.model = model;\n  }\n\n  note(opt) {\n    // build nodes\n    const osc = this.ac.createOscillator();\n    osc.connect(this.ac.destination);\n    return new Note(osc);\n  }\n\n}\n\nclass Note {\n\n  constructor(osc) {\n    this.osc = osc;\n  }\n\n  on(time) {\n    this.osc.start(time);\n  }\n\n  off(time) {\n    this.osc.stop(time);\n  }\n\n}\n\nmodule.exports = {\n  SynthBuilder\n};\n\n\n//# sourceURL=webpack://fcsynth/./src/index.js?");
 
 /***/ })
 
