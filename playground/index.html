@@ -2,6 +2,15 @@
   <head>
   </head>
   <body>
+    <div id="app">
+      <select name="midiDevice" v-model="selectedMidiDevice">
+        <option v-for="d in midiDevices" :value="d[1]">
+          {{ `${d[0]}: ${d[1].name}` }}
+        </option>
+      </select>
+      <button :disabled="!selectedMidiDevice" @click="connect">接続</button>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="../dist/index.js"></script>
     <script src="./js/main.js"></script>
   </body>

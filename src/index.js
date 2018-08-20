@@ -22,7 +22,10 @@ class Synth {
   note(opt) {
     // build nodes
     const osc = this.ac.createOscillator();
+    osc.type = 'square';
+    osc.frequency.value = opt.frequency;
     const gain = this.ac.createGain();
+    gain.gain.value = 0.25 * opt.velocity;
     osc.connect(gain);
     gain.connect(this.destination);
     return new Note(osc);
