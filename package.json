@@ -10,6 +10,7 @@
   "author": "carrotflakes",
   "license": "ISC",
   "devDependencies": {
+    "snakeparser-loader": "^1.0.1",
     "webpack": "^4.16.5",
     "webpack-cli": "^3.1.0"
   }

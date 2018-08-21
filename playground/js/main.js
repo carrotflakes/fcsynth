@@ -1,6 +1,10 @@
 const ac = new AudioContext();
-const sb = new fcsynth.SynthBuilder(ac);
-let synth = sb.build(fcsynth.defaultModel);
+function buildSynth(model) {
+  const sb = new fcsynth.SynthBuilder(ac);
+  return sb.build(model, ac.destination, ['c1', 'c2']);
+}
+
+let synth = buildSynth(fcsynth.defaultModel);
 
 {
   const note = synth.note({
@@ -11,6 +15,10 @@ let synth = sb.build(fcsynth.defaultModel);
   note.on(ac.currentTime);
   note.off(ac.currentTime + 1);
 }
+
+setInterval(() => {
+  synth.update(ac.currentTime);
+}, 1000);
 
 
 const app = new Vue({
@@ -47,10 +55,18 @@ const app = new Vue({
             delete this.notes[notenum];
           }
           break;
+        case 0xb0:
+          synth.setTrackParam(ac.currentTime, {c1: velocity / 127});
+          break;
+        case 0xe0:
+          synth.setTrackParam(ac.currentTime, {c2: velocity / 127});
+          break;
+        default:
+          console.log(event.data);
       }
     },
     applyModel() {
-      synth = sb.build(JSON.parse(this.model));
+      synth = buildSynth(JSON.parse(this.model));
     },
   },
   async mounted() {

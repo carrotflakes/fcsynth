@@ -1,5 +1,5 @@
-const {Node} = require('./node.js');
-const {evalExpr, interpolateExponentialRamp} = require('./util.js');
+import {Node} from './node.js';
+import {evalExpr, interpolateExponentialRamp} from './util.js';
 
 export class Envelope extends Node {
   constructor() {
@@ -84,7 +84,7 @@ export class LevelEnvelope extends Envelope {
     this.setValueAtTime(evalExpr(this.levelExpr, params), time);
   }
 
-  setParam(time, params) {
+  updateParam(time, params) {
     this.setValueAtTime(evalExpr(this.levelExpr, params), time);
   }
 }

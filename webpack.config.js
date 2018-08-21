@@ -11,6 +11,10 @@ module.exports = {
   },
   module: {
     rules: [
+      {
+        test: /\.sg$/,
+        use: "snakeparser-loader"
+      }
     ]
   }
 };

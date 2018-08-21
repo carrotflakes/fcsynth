@@ -1,27 +1,33 @@
-const buildNodes = require('./buildNodes.js').build;
+import {build as buildNodes} from './buildNodes.js';
 
-class SynthBuilder {
+export {default as defaultModel}from './defaultModel.js';
+export {source2model} from './source2model.js';
+
+export class SynthBuilder {
   constructor(ac) {
     this.ac = ac;
   }
 
-  build(model, destination) {
+  build(model, destination, paramIdentifiers=[]) {
     destination = destination || this.ac.destination;
-    return new Synth(this.ac, destination, model);
+    paramIdentifiers = paramIdentifiers;
+    return new Synth(this.ac, destination, model, paramIdentifiers);
   }
 }
 
 class Synth {
-  constructor(ac, destination, model) {
+  constructor(ac, destination, model, paramIdentifiers) {
     this.ac = ac;
     this.destination = destination;
     this.model = model;
-    this.trackParams = {}; // this can estimated from model
+    this.paramIdentifiers = paramIdentifiers;
+    this.trackParams = paramIdentifiers.reduce((acc, i) => ({...acc, [i]: 0}), {});
     this.notes = [];
   }
 
   note(noteParams) {
-    const {allNodes, criticalEnvelopes, rootNode} = buildNodes(this.model);
+    const {allNodes, criticalEnvelopes, rootNode} =
+      buildNodes(this.model, [...this.paramIdentifiers, 'velocity', 'frequency']);
     allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
     rootNode.connect(this.destination);
     const note = new Note(synth, allNodes, criticalEnvelopes, noteParams);
@@ -37,13 +43,13 @@ class Synth {
   setTrackParam(time, params) {
     this.trackParams = {
       ...this.trackParams,
-      params
+      ...params
     };
     this.notes.forEach(note => note._updateParam(time));
   }
 
   update(time) {
-    this.notes = this.notes.filter(note => note.endTime < time);
+    this.notes = this.notes.filter(note => time <= note.endTime);
   }
 }
 
@@ -95,8 +101,3 @@ class Note {
     this.allNodes.forEach(node => node.updateParam(time, params));
   }
 }
-
-module.exports = {
-  SynthBuilder,
-  defaultModel: require('./defaultModel.js'),
-};

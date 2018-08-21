@@ -1,4 +1,4 @@
-const {
+import {
   SimpleOscillator,
   Gain,
   NodeSet,
@@ -6,10 +6,10 @@ const {
   FrequencyEnvelope,
   LevelEnvelope,
   AdsrEnvelope,
-} = require('./nodes');
+} from './nodes';
 
-export function build(model) {
-  const node = buildNodes(model);
+export function build(model, paramIdentifiers) {
+  const node = buildNodes(model, paramIdentifiers);
   return {
     allNodes: unique(node.collectNodes()),
     criticalEnvelopes: unique(node.collectCriticalEnvelopes()),
@@ -17,8 +17,14 @@ export function build(model) {
   };
 }
 
-function buildNodes(model) {
+function buildNodes(model, paramIdentifiers) {
   const scope = [];
+  for (const paramIdentifier of paramIdentifiers) {
+    scope[paramIdentifier] = {
+      type: 'parameter',
+      name: paramIdentifier
+    };
+  }
   for (const declaration of model) {
     const {name, child} = declaration;
     if (name in scope) {
@@ -55,7 +61,7 @@ function buildNode(model, scope) {
     case 'level':
       return new LevelEnvelope(
         buildNode(model.expression, scope));
-    case 'envelope':
+    case 'adsrEnvelope':
       // TODO
       break;
     case 'operator':
@@ -65,11 +71,9 @@ function buildNode(model, scope) {
         args: model.args.map(arg => buildNode(arg, scope))
       }
       break;
-    case 'parameter':
-      return model;
     case 'value':
       return model;
-    case 'variable':
+    case 'identifier':
       return scope[model.name];
   }
 }

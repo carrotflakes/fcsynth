@@ -8,7 +8,7 @@ module.exports = [
           envelope: {
             type: 'level',
             expression: {
-              type: 'parameter',
+              type: 'identifier',
               name: 'velocity'
             }
           },
@@ -22,7 +22,7 @@ module.exports = [
               envelope: {
                 type: 'frequency',
                 expression: {
-                  type: 'parameter',
+                  type: 'identifier',
                   name: 'frequency'
                 }
               },

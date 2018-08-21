@@ -1,6 +1,6 @@
-const {evalExpr, volumeToGainValue} = require('./util.js');
+import {evalExpr, volumeToGainValue} from './util.js';
 
-class Node {
+export class Node {
   activate(ac) {
   }
 
@@ -33,7 +33,7 @@ class Node {
   }
 }
 
-class SimpleOscillator extends Node {
+export class SimpleOscillator extends Node {
   constructor(type, frequencyCtrl, delayExpr) {
     super();
     this.type = type;
@@ -74,7 +74,7 @@ class SimpleOscillator extends Node {
   }
 }
 
-class Gain extends Node {
+export class Gain extends Node {
   constructor(gainCtrl, child) {
     super();
     this.gainCtrl = gainCtrl;
@@ -106,7 +106,7 @@ class Gain extends Node {
   }
 }
 
-class NodeSet extends Node {
+export class NodeSet extends Node {
   constructor(nodes) {
     super();
     this.nodes = nodes;
@@ -129,7 +129,7 @@ class NodeSet extends Node {
 }
 
 /*
-class Mixer {
+export class Mixer {
   constructor(ac) {
     this.gain = ac.createGain();
     this.panner = ac.createStereoPanner();
@@ -157,11 +157,3 @@ class Mixer {
     this.panner.connect(audioNode);
   }
 }*/
-
-module.exports = {
-  Node,
-  SimpleOscillator,
-  Gain,
-  NodeSet,
-  //Mixer,
-};
