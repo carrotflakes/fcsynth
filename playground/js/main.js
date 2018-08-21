@@ -1,13 +1,16 @@
 const ac = new AudioContext();
 const sb = new fcsynth.SynthBuilder(ac);
-const synth = sb.build(fcsynth.defaultModel);
-const note = synth.note({
-  frequency: 440,
-  velocity: 0.75
-});
+let synth = sb.build(fcsynth.defaultModel);
 
-note.on(ac.currentTime);
-note.off(ac.currentTime + 1);
+{
+  const note = synth.note({
+    frequency: 440,
+    velocity: 0.75
+  });
+
+  note.on(ac.currentTime);
+  note.off(ac.currentTime + 1);
+}
 
 
 const app = new Vue({
@@ -17,7 +20,8 @@ const app = new Vue({
     midiAccess: null,
     midiDevices: [],
     selectedMidiDevice: null,
-    notes: {}
+    notes: {},
+    model: JSON.stringify(fcsynth.defaultModel, null, '  '),
   },
   methods: {
     connect() {
@@ -45,9 +49,15 @@ const app = new Vue({
           break;
       }
     },
+    applyModel() {
+      synth = sb.build(JSON.parse(this.model));
+    },
   },
   async mounted() {
     this.midiAccess = await navigator.requestMIDIAccess();
     this.midiDevices = [...this.midiAccess.inputs];
+    if (this.midiDevices.length > 0) {
+      this.selectedMidiDevice = this.midiDevices[0][1];
+    }
   }
 });

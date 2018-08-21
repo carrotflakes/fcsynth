@@ -9,6 +9,10 @@
         </option>
       </select>
       <button :disabled="!selectedMidiDevice" @click="connect">接続</button>
+      <br>
+      <textarea v-model="model" rows="50" cols="50"></textarea>
+      <br>
+      <button @click="applyModel">反映</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="../dist/index.js"></script>
