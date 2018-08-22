@@ -162,5 +162,5 @@ function clamp(min, max, val) {
 }
 
 const TIME_EPS = 0.0000001;
-const GAIN_EPS = 0.01
+const GAIN_EPS = 0.0001;
 const FREQUENCY_EPS = 0.0000001;
