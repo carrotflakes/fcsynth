@@ -6,6 +6,7 @@ import {
   FrequencyEnvelope,
   LevelEnvelope,
   AdsrEnvelope,
+  ParcEnvelope
 } from './nodes';
 
 export function build(model, paramIdentifiers) {
@@ -67,6 +68,11 @@ function buildNode(model, scope) {
         buildNode(model.attack, scope),
         buildNode(model.decay, scope),
         buildNode(model.sustain, scope),
+        buildNode(model.release, scope));
+    case 'parcEnvelope':
+      return new ParcEnvelope(
+        buildNode(model.level, scope),
+        buildNode(model.attack, scope),
         buildNode(model.release, scope));
     case 'operator':
       return {

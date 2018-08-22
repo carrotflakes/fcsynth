@@ -8,11 +8,11 @@ function transformSynth(ast) {
   return [
     ...ast.assignments.map((assignment) => ({
       name: assignment.identifier,
-      child: transform(assignment.expression)
+      child: collectComposedNodes(transform(assignment.expression))
     })),
     {
       name: '@note',
-      child: transform(ast.body)
+      child: collectComposedNodes(transform(ast.body))
     }
   ];
 }
@@ -71,6 +71,16 @@ function transform(ast) {
               decay: transform(ast.arguments[2]),
               sustain: transform(ast.arguments[3]),
               release: transform(ast.arguments[4])
+            },
+            modulator: []
+          };
+        case 'parc':
+          return {
+            envelope: {
+              type: 'parcEnvelope',
+              level: transform(ast.arguments[0]),
+              attack: transform(ast.arguments[1]),
+              release: transform(ast.arguments[2])
             },
             modulator: []
           };
