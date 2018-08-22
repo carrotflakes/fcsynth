@@ -8,26 +8,24 @@ export class SynthBuilder {
     this.ac = ac;
   }
 
-  build(model, destination, paramIdentifiers=[]) {
+  build(model, destination, params) {
     destination = destination || this.ac.destination;
-    paramIdentifiers = paramIdentifiers;
-    return new Synth(this.ac, destination, model, paramIdentifiers);
+    return new Synth(this.ac, destination, model, params);
   }
 }
 
 class Synth {
-  constructor(ac, destination, model, paramIdentifiers) {
+  constructor(ac, destination, model, params) {
     this.ac = ac;
     this.destination = destination;
     this.model = model;
-    this.paramIdentifiers = paramIdentifiers;
-    this.trackParams = paramIdentifiers.reduce((acc, i) => ({...acc, [i]: 0}), {});
+    this.trackParams = {...params};
     this.notes = [];
   }
 
   note(noteParams) {
     const {allNodes, criticalEnvelopes, rootNode} =
-      buildNodes(this.model, [...this.paramIdentifiers, 'velocity', 'frequency']);
+      buildNodes(this.model, [...Object.keys(this.trackParams), 'velocity', 'frequency']);
     allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
     rootNode.connect(this.destination);
     const note = new Note(synth, allNodes, criticalEnvelopes, noteParams);

@@ -8,7 +8,7 @@ function transformSynth(ast) {
   return [
     ...ast.assignments.map((assignment) => ({
       name: assignment.identifier,
-      child: collectComposedNodes(transform(assignment.expression))
+      child: transform(assignment.expression)
     })),
     {
       name: '@note',

@@ -3,9 +3,15 @@ const masterGain = ac.createGain();
 masterGain.gain.value = 0.5;
 masterGain.connect(ac.destination);
 
-function buildSynth(model) {
+function buildSynth(model, params) {
   const sb = new fcsynth.SynthBuilder(ac);
-  return sb.build(model, masterGain, ['c1', 'c2', 'mod', 'pitch']);// TODO {c1: 0 c2: 1}
+  params = params || {
+    c1: 0,
+    c2: 0,
+    mod: 0,
+    pitch: 0,
+  };
+  return sb.build(model, masterGain, params);
 }
 
 let synth = buildSynth(fcsynth.defaultModel);
@@ -96,7 +102,7 @@ gain(adsr(velocity,10,100,0.5,100))<-sin(fr(f)<-(m1+m2))
       }
     },
     applyModel() {
-      synth = buildSynth(fcsynth.source2model(this.model));
+      synth = buildSynth(fcsynth.source2model(this.model), synth.trackParams);
     },
   },
   async mounted() {
