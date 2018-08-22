@@ -1,7 +1,11 @@
 const ac = new AudioContext();
+const masterGain = ac.createGain();
+masterGain.gain.value = 0.5;
+masterGain.connect(ac.destination);
+
 function buildSynth(model) {
   const sb = new fcsynth.SynthBuilder(ac);
-  return sb.build(model, ac.destination, ['c1', 'c2', 'mod', 'pitch']);// TODO {c1: 0 c2: 1}
+  return sb.build(model, masterGain, ['c1', 'c2', 'mod', 'pitch']);// TODO {c1: 0 c2: 1}
 }
 
 let synth = buildSynth(fcsynth.defaultModel);
@@ -33,7 +37,7 @@ const app = new Vue({
 f=frequency+pitch*100,
 m1=gain(lv(c1 * 5000))<-sin(fr(f*(2*c2))),
 m2=gain(lv(mod*20))<-sin(fr(5)),
-gain(lv(velocity))<-sin(fr(f)<-(m1+m2))
+gain(adsr(velocity,10,100,0.5,100))<-sin(fr(f)<-(m1+m2))
 `.trim(),
   },
   methods: {

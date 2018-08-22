@@ -1,18 +1,23 @@
 <html lang="ja">
   <head>
+    <style>
+     [v-cloak] {
+       display: none;
+     }
+    </style>
   </head>
   <body>
-    <div id="app">
+    <div id="app" v-cloak>
       <select name="midiDevice" v-model="selectedMidiDevice">
         <option v-for="d in midiDevices" :value="d[1]">
           {{ `${d[0]}: ${d[1].name}` }}
         </option>
       </select>
-      <button :disabled="!selectedMidiDevice" @click="connect">接続</button>
+      <button :disabled="!selectedMidiDevice" @click="connect">connect</button>
       <br>
-      <textarea v-model="model" rows="50" cols="50"></textarea>
+      <textarea v-model="model" rows="10" cols="50"></textarea>
       <br>
-      <button @click="applyModel">反映</button>
+      <button @click="applyModel">apply</button>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="../dist/index.js"></script>

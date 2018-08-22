@@ -91,14 +91,17 @@ export class LevelEnvelope extends Envelope {
 
 export class AdsrEnvelope extends Envelope {
   constructor(levelExpr, attackExpr, decayExpr, sustainExpr, releaseExpr) {
+    super();
     this.levelExpr = levelExpr;
     this.attackExpr = attackExpr;
     this.decayExpr = decayExpr;
     this.sustainExpr = sustainExpr;
     this.releaseExpr = releaseExpr;
+    this.startTime = null;
   }
 
   start(time, params) {
+    this.startTime = time;
     this.level = evalExpr(this.levelExpr, params);
     this.attack = clamp(TIME_EPS, Infinity, evalExpr(this.attackExpr, params) * 0.001);
     this.decay = clamp(TIME_EPS, Infinity, evalExpr(this.decayExpr, params) * 0.001);
@@ -114,11 +117,11 @@ export class AdsrEnvelope extends Envelope {
     this._endTime = time + this.release;
 
     this.cancelScheduledValues(time);
-    if (time <= note.startTime + this.attack) {
-      const v = this.level * interpolateExponentialRamp(GAIN_EPS, 1, (time - note.startTime) / this.attack);
+    if (time <= this.startTime + this.attack) {
+      const v = this.level * interpolateExponentialRamp(GAIN_EPS, 1, (time - this.startTime) / this.attack);
       this.exponentialRampToValueAtTime(v, time);
-    } else if (time < note.startTime + this.attack + this.decay) {
-      const v = this.level * interpolateExponentialRamp(1, this.sustain, (time - note.startTime - this.attack) / this.decay);
+    } else if (time < this.startTime + this.attack + this.decay) {
+      const v = this.level * interpolateExponentialRamp(1, this.sustain, (time - this.startTime - this.attack) / this.decay);
       this.exponentialRampToValueAtTime(v, time);
     } else {
       this.setValueAtTime(this.level * this.sustain, time);

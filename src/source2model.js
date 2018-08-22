@@ -62,6 +62,18 @@ function transform(ast) {
             },
             modulator: []
           };
+        case 'adsr':
+          return {
+            envelope: {
+              type: 'adsrEnvelope',
+              level: transform(ast.arguments[0]),
+              attack: transform(ast.arguments[1]),
+              decay: transform(ast.arguments[2]),
+              sustain: transform(ast.arguments[3]),
+              release: transform(ast.arguments[4])
+            },
+            modulator: []
+          };
           // TODO: adsr... lpf...
         case '+':
         case '-':
