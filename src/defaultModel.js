@@ -7,9 +7,9 @@ module.exports = [
         gain: {
           envelope: {
             type: 'level',
-            expression: {
+            level: {
               type: 'identifier',
-              name: 'velocity'
+              identifier: 'velocity'
             }
           },
           modulator: [],
@@ -21,9 +21,9 @@ module.exports = [
             frequency: {
               envelope: {
                 type: 'frequency',
-                expression: {
+                frequency: {
                   type: 'identifier',
-                  name: 'frequency'
+                  identifier: 'frequency'
                 }
               },
               modulator: []

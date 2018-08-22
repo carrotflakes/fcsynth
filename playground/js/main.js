@@ -1,7 +1,7 @@
 const ac = new AudioContext();
 function buildSynth(model) {
   const sb = new fcsynth.SynthBuilder(ac);
-  return sb.build(model, ac.destination, ['c1', 'c2']);
+  return sb.build(model, ac.destination, ['c1', 'c2', 'mod', 'pitch']);// TODO {c1: 0 c2: 1}
 }
 
 let synth = buildSynth(fcsynth.defaultModel);
@@ -29,7 +29,12 @@ const app = new Vue({
     midiDevices: [],
     selectedMidiDevice: null,
     notes: {},
-    model: JSON.stringify(fcsynth.defaultModel, null, '  '),
+    model: `
+f=frequency+pitch*100,
+m1=gain(lv(c1 * 5000))<-sin(fr(f*(2*c2))),
+m2=gain(lv(mod*20))<-sin(fr(5)),
+gain(lv(velocity))<-sin(fr(f)<-(m1+m2))
+`.trim(),
   },
   methods: {
     connect() {
@@ -37,36 +42,57 @@ const app = new Vue({
       this.selectedMidiDevice.addEventListener('midimessage', this.eventHandler, false);
     },
     eventHandler(event) {
-      const [type, notenum, velocity] = event.data;
+      const [type, d1, d2] = event.data;
       let note;
       switch (type) {
         case 0x90:
+          if (d2 === 0) {
+            // noteoff
+            note = this.notes[d1];
+            if (note) {
+              note.off(ac.currentTime);
+              delete this.notes[d1];
+            }
+            break;
+          }
           note = synth.note({
-            frequency: 6.875 * Math.pow(2, (notenum + 3) / 12),
-            velocity: velocity / 127
+            frequency: 6.875 * Math.pow(2, (d1 + 3) / 12),
+            velocity: d2 / 127
           });
           note.on(ac.currentTime);
-          this.notes[notenum] = note;
+          this.notes[d1] = note;
           break;
         case 0x80:
-          note = this.notes[notenum];
+          note = this.notes[d1];
           if (note) {
             note.off(ac.currentTime);
-            delete this.notes[notenum];
+            delete this.notes[d1];
           }
           break;
         case 0xb0:
-          synth.setTrackParam(ac.currentTime, {c1: velocity / 127});
+          switch (d1) {
+            case 74:
+              synth.setTrackParam(ac.currentTime, {c1: d2 / 127});
+              break;
+            case 71:
+              synth.setTrackParam(ac.currentTime, {c2: d2 / 127});
+              break;
+            case 1:
+              synth.setTrackParam(ac.currentTime, {mod: d2 / 127});
+              break;
+            default:
+              console.log(event.data);
+          }
           break;
-        case 0xe0:
-          synth.setTrackParam(ac.currentTime, {c2: velocity / 127});
+        case 0xe0: // pitchbend
+          synth.setTrackParam(ac.currentTime, {pitch: ((d2 << 7) + d1 - 8192)/ 8192});
           break;
         default:
           console.log(event.data);
       }
     },
     applyModel() {
-      synth = buildSynth(JSON.parse(this.model));
+      synth = buildSynth(fcsynth.source2model(this.model));
     },
   },
   async mounted() {

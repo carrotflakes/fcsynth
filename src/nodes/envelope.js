@@ -52,7 +52,7 @@ export class FrequencyEnvelope extends Envelope {
     this.setValueAtTime(evalExpr(this.frequencyExpr, params), time);
   }
 
-  setParam(time, params) {
+  updateParam(time, params) {
     this.setValueAtTime(evalExpr(this.frequencyExpr, params), time);
   }
 

@@ -50,20 +50,24 @@ function buildNode(model, scope) {
       return new SimpleOscillator(
         model.waveType,
         buildAudioParam(model.frequency),
-        buildNode(model.delay, scope));
+        model.delay ? buildNode(model.delay, scope) : null);
     case 'gain':
       return new Gain(
         buildAudioParam(model.gain),
         buildNode(model.child, scope));
     case 'frequency':
       return new FrequencyEnvelope(
-        buildNode(model.expression, scope));
+        buildNode(model.frequency, scope));
     case 'level':
       return new LevelEnvelope(
-        buildNode(model.expression, scope));
+        buildNode(model.level, scope));
     case 'adsrEnvelope':
-      // TODO
-      break;
+      return new AdsrEnvelope(
+        buildNode(model.level, scope),
+        buildNode(model.attack, scope),
+        buildNode(model.decay, scope),
+        buildNode(model.sustain, scope),
+        buildNode(model.release, scope));
     case 'operator':
       return {
         type: 'operator',
@@ -74,7 +78,7 @@ function buildNode(model, scope) {
     case 'value':
       return model;
     case 'identifier':
-      return scope[model.name];
+      return scope[model.identifier];
   }
 }
 

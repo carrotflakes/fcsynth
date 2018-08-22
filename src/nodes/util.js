@@ -1,7 +1,7 @@
 export function evalExpr(expr, params) {
   switch (expr.type) {
     case 'operator':
-      const args = expr.arguments.map(x => evalExpr(x, params));
+      const args = expr.args.map(x => evalExpr(x, params));
       switch (expr.operator) {
         case '+':
           if (args.length === 2) {
