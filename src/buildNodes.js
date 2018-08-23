@@ -1,4 +1,5 @@
 import {
+  Node,
   SimpleOscillator,
   Gain,
   NodeSet,
@@ -6,7 +7,8 @@ import {
   FrequencyEnvelope,
   LevelEnvelope,
   AdsrEnvelope,
-  ParcEnvelope
+  ParcEnvelope,
+  Filter,
 } from './nodes';
 
 export function build(model, paramIdentifiers) {
@@ -74,11 +76,28 @@ function buildNode(model, scope) {
         buildNode(model.level, scope),
         buildNode(model.attack, scope),
         buildNode(model.release, scope));
+    case 'filter':
+      return new Filter(
+        model.filterType,
+        model.frequency ? buildAudioParam(model.frequency) : null,
+        model.gain ? buildAudioParam(model.gain) : null,
+        model.Q ? buildAudioParam(model.Q) : null,
+        buildNode(model.child, scope));
     case 'operator':
+      const args = model.args.map(arg => buildNode(arg, scope));
+      if (model.operator === '+' && args.every(n => n instanceof Node)) {
+        const nodeSet = args.find(n => n instanceof NodeSet);
+        if (nodeSet) {
+          nodeSet.nodes.push(...args.filter(n => !(n instanceof NodeSet)));
+          return nodeSet;
+        } else {
+          return new NodeSet(args);
+        }
+      }
       return {
         type: 'operator',
         operator: model.operator,
-        args: model.args.map(arg => buildNode(arg, scope))
+        args
       }
       break;
     case 'value':

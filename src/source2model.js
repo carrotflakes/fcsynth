@@ -84,7 +84,36 @@ function transform(ast) {
             },
             modulator: []
           };
-          // TODO: adsr... lpf...
+        case 'lpf':
+        case 'hpf':
+        case 'bpf':
+        case 'ncf':
+        case 'apf':
+          return {
+            type: 'filter',
+            filterType: {lpf: "lowpass", hpf: "highpass", bpf: "bandpass", ncf: "notch", apf: "allpass"}[ast.func],
+            frequency: transform(ast.arguments[0]),
+            Q: transform(ast.arguments[1]),
+            child: []
+          };
+        case 'lsf':
+        case 'hsf':
+          return {
+            type: 'filter',
+            filterType: {lsf: "lowshelf", hsf: "highshelf"}[ast.func],
+            frequency: transform(ast.arguments[0]),
+            gain: transform(ast.arguments[1]),
+            child: []
+          };
+        case 'pkf':
+          return {
+            type: 'filter',
+            filterType: 'peaking',
+            frequency: transform(ast.arguments[0]),
+            Q: transform(ast.arguments[1]),
+            gain: transform(ast.arguments[2]),
+            child: []
+          };
         case '+':
         case '-':
         case '*':
