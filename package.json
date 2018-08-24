@@ -2,7 +2,7 @@
   "name": "fcsynth",
   "version": "0.0.1",
   "description": "compositional sound-synthesis module",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
