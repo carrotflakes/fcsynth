@@ -70,7 +70,7 @@ export class SimpleOscillator extends Node {
   }
 
   collectCriticalEnvelopes() {
-    throw new Error('Not implemented');
+    return [];
   }
 }
 
