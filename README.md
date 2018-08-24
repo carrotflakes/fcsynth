@@ -2,7 +2,7 @@
 Web Audio API based synthesis module.
 
 ## Usage
-```
+``` javascript
 // initialize
 const ac = new AudioContext();
 const sb = new fcsynth.SynthBuilder(ac);
