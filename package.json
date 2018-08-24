@@ -1,6 +1,6 @@
 {
   "name": "fcsynth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "compositional sound-synthesis module",
   "main": "dist/index.js",
   "scripts": {
