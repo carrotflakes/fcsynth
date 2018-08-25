@@ -18,6 +18,8 @@
       <textarea v-model="model" rows="10" cols="50"></textarea>
       <br>
       <button @click="applyModel">apply</button>
+      <br>
+      <canvas id="canvas" width="256" height="128" @click="toggleMode"></canvas>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
     <script src="../dist/index.js"></script>
