@@ -1,7 +1,9 @@
 import {build as buildNodes} from './buildNodes.js';
 
-export {default as defaultModel}from './defaultModel.js';
+export {makeDefaultModel}from './defaultModel.js';
 export {source2model} from './source2model.js';
+
+export const frequency = Symbol('frequency');
 
 export class SynthBuilder {
   constructor(ac) {
@@ -25,7 +27,7 @@ class Synth {
 
   note(noteParams) {
     const {allNodes, criticalEnvelopes, rootNode} =
-      buildNodes(this.model, [...Object.keys(this.trackParams), 'velocity', 'frequency']);
+      buildNodes(this.model, Object.keys(this.trackParams));
     allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
     rootNode.connect(this.destination);
     const note = new Note(synth, allNodes, criticalEnvelopes, noteParams);

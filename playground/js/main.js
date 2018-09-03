@@ -6,6 +6,8 @@ masterGain.connect(ac.destination);
 function buildSynth(model, params) {
   const sb = new fcsynth.SynthBuilder(ac);
   params = params || {
+    f: fcsynth.frequency,
+    y: 0.75,
     c1: 0,
     c2: 0,
     mod: 0,
@@ -15,12 +17,12 @@ function buildSynth(model, params) {
   return sb.build(model, masterGain, params);
 }
 
-let synth = buildSynth(fcsynth.defaultModel);
+let synth = buildSynth(fcsynth.makeDefaultModel('f', 'y'));
 
 {
   const note = synth.note({
-    frequency: 440,
-    velocity: 0.75
+    f: 440,
+    y: 0.75
   });
 
   note.on(ac.currentTime);
@@ -41,10 +43,10 @@ const app = new Vue({
     selectedMidiDevice: null,
     notes: {},
     model: `
-f=frequency+pitch*100,
-m1=gain(lv(c1 * 5000))<-sin(fr(f*(2*c2))),
+freq=f+pitch*100,
+m1=gain(lv(c1 * 5000))<-sin(fr(freq*(2*c2))),
 m2=gain(lv(mod*20))<-sin(fr(5)),
-gain(adsr(velocity,10,100,0.5,100))<-sin(fr(f)<-(m1+m2))
+gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
 `.trim(),
     analyserMode: 0,
   },
@@ -68,8 +70,8 @@ gain(adsr(velocity,10,100,0.5,100))<-sin(fr(f)<-(m1+m2))
             break;
           }
           note = synth.note({
-            frequency: 6.875 * Math.pow(2, (d1 + 3) / 12),
-            velocity: d2 / 127
+            f: 6.875 * Math.pow(2, (d1 + 3) / 12),
+            y: d2 / 127
           });
           note.on(ac.currentTime);
           this.notes[d1] = note;
