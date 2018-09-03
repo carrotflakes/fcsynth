@@ -6,7 +6,10 @@ Web Audio API based synthesis module.
 // initialize
 const ac = new AudioContext();
 const sb = new fcsynth.SynthBuilder(ac);
-const synth = sb.build(fcsynth.defaultModel, ac.destination, {});
+const synth = sb.build(
+  fcsynth.makeDefaultModel('f', 'y'),
+  ac.destination,
+  {f: fcsynth.frequency, y: 0.75});
 
 // synth needs to be update regularly while playing notes.
 setInterval(() => {
@@ -15,8 +18,8 @@ setInterval(() => {
 
 // play notes
 const note = synth.note({
-  frequency: 440,
-  velocity: 0.75
+  f: 440, // frequency
+  y: 0.75 // velocity
 });
 note.on(ac.currentTime);
 note.off(ac.currentTime + 1);
