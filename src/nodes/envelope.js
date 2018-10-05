@@ -1,10 +1,11 @@
 import {Node} from './node.js';
 import {evalExpr, interpolateExponentialRamp} from './util.js';
+import {AudioParamSet} from './audioParamSet';
 
 export class Envelope extends Node {
   constructor() {
     super();
-    this.audioParams = [];
+    this.audioParamSet = new AudioParamSet();
     this._endTime = Infinity;
   }
 
@@ -13,19 +14,19 @@ export class Envelope extends Node {
   }
 
   setValueAtTime(value, time) {
-    this.audioParams.forEach(x => x.setValueAtTime(value, time));
+    this.audioParamSet.setValueAtTime(value, time);
   }
 
   exponentialRampToValueAtTime(value, time) {
-    this.audioParams.forEach(x => x.exponentialRampToValueAtTime(value, time));
+    this.audioParamSet.exponentialRampToValueAtTime(value, time);
   }
 
   cancelScheduledValues(time) {
-    this.audioParams.forEach(x => x.cancelScheduledValues(time));
+    this.audioParamSet.cancelScheduledValues(time);
   }
 
   connect(audioParam) {
-    this.audioParams.push(audioParam);
+    this.audioParamSet.add(audioParam);
   }
 
   get endTime() {
