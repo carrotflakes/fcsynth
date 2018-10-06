@@ -14,6 +14,7 @@
         </option>
       </select>
       <button :disabled="!selectedMidiDevice" @click="connect">connect</button>
+      <input type="range" v-model="tempo" min="20" max="240"></input>{{ tempo }}
       <br>
       <textarea v-model="model" rows="10" cols="50"></textarea>
       <br>

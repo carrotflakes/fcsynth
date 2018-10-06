@@ -7,12 +7,12 @@ function buildSynth(model, params) {
   const sb = new fcsynth.SynthBuilder(ac);
   params = params || {
     f: fcsynth.frequency,
+    tempo: 120,
     y: 0.75,
     c1: 0,
     c2: 0,
     mod: 0,
     pitch: 0,
-    spb: 60 / 120,
   };
   return sb.build(model, masterGain, params);
 }
@@ -49,6 +49,12 @@ m2=gain(lv(mod*20))<-sin(fr(5)),
 gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
 `.trim(),
     analyserMode: 0,
+    tempo: 120,
+  },
+  watch: {
+    tempo(val) {
+      synth.setTempo(ac.currentTime + 0.1, +val);
+    },
   },
   methods: {
     connect() {
@@ -75,6 +81,8 @@ gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
           });
           note.on(ac.currentTime);
           this.notes[d1] = note;
+
+          note.frequency(ac.currentTime + 1, 440, ac.currentTime + 4, 880);
           break;
         case 0x80:
           note = this.notes[d1];

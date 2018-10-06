@@ -1,4 +1,5 @@
 import {build as buildNodes} from './buildNodes.js';
+import {FrequencyEnvelope} from './nodes/envelope.js';
 
 export {makeDefaultModel}from './defaultModel.js';
 export {source2model} from './source2model.js';
@@ -46,6 +47,18 @@ class Synth {
       ...params
     };
     this.notes.forEach(note => note._updateParam(time));
+  }
+
+  setTempo(time, tempo) {
+    if (0 < tempo && tempo <= 1000) {
+      this.trackParams = {
+        ...this.trackParams,
+        tempo,
+      };
+      this.notes.forEach(note => note.updateTempo(time, tempo));
+    } else {
+      throw new Error('Tempo must be within range (0, 1000]');
+    }
   }
 
   update(time) {
@@ -99,5 +112,25 @@ class Note {
       ...this.noteParams,
     };
     this.allNodes.forEach(node => node.updateParam(time, params));
+  }
+
+  frequency(time, start, endTime, end) {
+    const params = {
+      ...this.synth.trackParams,
+      ...this.noteParams,
+    };
+    this.allNodes.forEach(node => {
+      if (node instanceof FrequencyEnvelope) {
+        node.frequency(start, time, end, endTime, params);
+      }
+    });
+  }
+
+  updateTempo(time) {
+    const params = {
+      ...this.synth.trackParams,
+      ...this.noteParams,
+    };
+    this.allNodes.forEach(node => node.updateTempo(time, params));
   }
 }

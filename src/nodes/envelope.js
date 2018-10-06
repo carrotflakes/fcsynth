@@ -1,6 +1,13 @@
 import {Node} from './node.js';
 import {evalExpr, interpolateExponentialRamp} from './util.js';
-import {AudioParamSet} from './audioParamSet';
+import {AudioParamSet} from './audioParamSet.js';
+import Scheduler from './scheduler.js';
+import {
+  TIME_EPS,
+  GAIN_EPS,
+  FREQUENCY_EPS
+} from './constant.js';
+
 
 export class Envelope extends Node {
   constructor() {
@@ -46,24 +53,29 @@ export class Envelope extends Node {
 export class FrequencyEnvelope extends Envelope {
   constructor(frequencyExpr) {
     super();
+    this.scheduler = new Scheduler(this.audioParamSet);
     this.frequencyExpr = frequencyExpr;
   }
 
   start(time, params) {
-    this.setValueAtTime(evalExpr(this.frequencyExpr, params), time);
+    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params.tempo);
   }
 
   updateParam(time, params) {
-    this.setValueAtTime(evalExpr(this.frequencyExpr, params), time);
+    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params.tempo);
   }
 
-  frequency(start, time, end, endTime, note) {
-    this.setValueAtTime(evalExpr(this.frequecyExpr, {
-      ...note.param,
+  updateTempo(time, params) {
+    this.scheduler.setTempo(params.tempo, time);
+  }
+
+  frequency(start, time, end, endTime, params) {
+    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, {
+      ...params,
       f: start
-    }), time);
-    let endFrequency = evalExpr(this.frequecyExpr, {
-      ...note.param,
+    }), time, params.tempo);
+    let endFrequency = evalExpr(this.frequencyExpr, {
+      ...params,
       f: end
     });
     if (endFrequency < 0) {
@@ -71,7 +83,7 @@ export class FrequencyEnvelope extends Envelope {
     } else {
       endFrequency = Math.max(FREQUENCY_EPS, endFrequency);
     }
-    this.exponentialRampToValueAtTime(endFrequency, endTime)
+    this.scheduler.exponentialRampToValueAtTime(endFrequency, endTime, params.tempo);
   }
 }
 
@@ -161,7 +173,3 @@ export class ParcEnvelope extends Envelope {
 function clamp(min, max, val) {
   return Math.max(min, Math.min(max, val));
 }
-
-const TIME_EPS = 0.0000001;
-const GAIN_EPS = 0.0001;
-const FREQUENCY_EPS = 0.0000001;
