@@ -39,7 +39,7 @@ class Synth {
     allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
     rootNode.connect(this.destination);
     noteParams = mapParams(noteParams, this.nameMap);
-    const note = new Note(synth, allNodes, criticalEnvelopes, noteParams);
+    const note = new Note(this, allNodes, criticalEnvelopes, noteParams);
     this.notes.push(note);
     return note;
   }

@@ -59,7 +59,6 @@ export class FrequencyEnvelope extends Envelope {
   }
 
   start(time, params) {
-    console.log(params);
     this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params[tempo]);
   }
 
