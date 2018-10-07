@@ -58,6 +58,9 @@ class Synth {
   }
 
   update(time) {
+    if (time === void 0) {
+      throw new Error('Synth.update is required `time` argument');
+    }
     this.notes = this.notes.filter(note => time <= note.endTime);
   }
 }
