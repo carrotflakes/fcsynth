@@ -81,8 +81,6 @@ gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
           });
           note.on(ac.currentTime);
           this.notes[d1] = note;
-
-          note.frequency(ac.currentTime + 1, 440, ac.currentTime + 4, 880);
           break;
         case 0x80:
           note = this.notes[d1];
