@@ -5,11 +5,15 @@ Web Audio API based synthesis module.
 ``` javascript
 // initialize
 const ac = new AudioContext();
-const sb = new fcsynth.SynthBuilder(ac);
+const nameMap = {f: fcsynth.frequency, tempo: fcsynth.tempo};
+const sb = new fcsynth.SynthBuilder(ac, nameMap);
 const synth = sb.build(
-  fcsynth.makeDefaultModel('f', 'y'),
+  fcsynth.makeDefaultModel('y'),
   ac.destination,
-  {f: fcsynth.frequency, y: 0.75});
+  {
+    tempo: 120,
+    y: 0.75
+  });
 
 // synth needs to be update regularly while playing notes.
 setInterval(() => {

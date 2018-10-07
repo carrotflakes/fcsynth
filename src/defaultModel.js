@@ -1,4 +1,6 @@
-export function makeDefaultModel(frequency, velocity) {
+import {frequency} from './symbols.js';
+
+export function makeDefaultModel(velocity) {
   return [
     {
       name: '@note',

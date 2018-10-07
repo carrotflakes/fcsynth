@@ -16,9 +16,6 @@ export class Node {
   updateParam(time, params) {
   }
 
-  updateTempo(time, params) {
-  }
-
   connect(rawNode) {
     this.rawNodes.forEach(cf => cf.connect(rawNode));
   }

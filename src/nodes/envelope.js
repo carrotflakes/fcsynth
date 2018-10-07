@@ -7,6 +7,7 @@ import {
   GAIN_EPS,
   FREQUENCY_EPS
 } from './constant.js';
+import {frequency, tempo} from '../symbols.js';
 
 
 export class Envelope extends Node {
@@ -58,32 +59,29 @@ export class FrequencyEnvelope extends Envelope {
   }
 
   start(time, params) {
-    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params.tempo);
+    console.log(params);
+    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params[tempo]);
   }
 
   updateParam(time, params) {
-    this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, params), time, params.tempo);
-  }
-
-  updateTempo(time, params) {
-    this.scheduler.setTempo(params.tempo, time);
+    this.scheduler.setTempo(params[tempo], time);
   }
 
   frequency(start, time, end, endTime, params) {
     this.scheduler.setValueAtTime(evalExpr(this.frequencyExpr, {
       ...params,
-      f: start
-    }), time, params.tempo);
+      [frequency]: start
+    }), time, params[tempo]);
     let endFrequency = evalExpr(this.frequencyExpr, {
       ...params,
-      f: end
+      [frequency]: end
     });
     if (endFrequency < 0) {
       endFrequency = Math.min(-FREQUENCY_EPS, endFrequency);
     } else {
       endFrequency = Math.max(FREQUENCY_EPS, endFrequency);
     }
-    this.scheduler.exponentialRampToValueAtTime(endFrequency, endTime, params.tempo);
+    this.scheduler.exponentialRampToValueAtTime(endFrequency, endTime, params[tempo]);
   }
 }
 

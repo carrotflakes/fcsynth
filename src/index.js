@@ -1,36 +1,44 @@
 import {build as buildNodes} from './buildNodes.js';
 import {FrequencyEnvelope} from './nodes/envelope.js';
+import {frequency, tempo} from './symbols.js';
+import {source2model} from './source2model.js';
 
 export {makeDefaultModel}from './defaultModel.js';
-export {source2model} from './source2model.js';
-
-export const frequency = Symbol('frequency');
+export * from './symbols.js';
 
 export class SynthBuilder {
-  constructor(ac) {
+  constructor(ac, nameMap={frequency: frequency, tempo: tempo}) {
     this.ac = ac;
+    this.nameMap = nameMap;
   }
 
   build(model, destination, params) {
     destination = destination || this.ac.destination;
-    return new Synth(this.ac, destination, model, params);
+    return new Synth(this.nameMap, this.ac, destination, model, params);
+  }
+
+  source2model(source) {
+    return source2model(source, this.nameMap);
   }
 }
 
 class Synth {
-  constructor(ac, destination, model, params) {
+  constructor(nameMap, ac, destination, model, params) {
+    this.nameMap = nameMap;
     this.ac = ac;
     this.destination = destination;
     this.model = model;
-    this.trackParams = {...params};
+    this.trackParams = mapParams(params, nameMap);
+    this.allParamNames = [...Object.keys(params), frequency];
     this.notes = [];
   }
 
   note(noteParams) {
     const {allNodes, criticalEnvelopes, rootNode} =
-      buildNodes(this.model, Object.keys(this.trackParams));
+      buildNodes(this.model, this.allParamNames);
     allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
     rootNode.connect(this.destination);
+    noteParams = mapParams(noteParams, this.nameMap);
     const note = new Note(synth, allNodes, criticalEnvelopes, noteParams);
     this.notes.push(note);
     return note;
@@ -44,21 +52,9 @@ class Synth {
   setTrackParam(time, params) {
     this.trackParams = {
       ...this.trackParams,
-      ...params
+      ...mapParams(params, this.nameMap)
     };
     this.notes.forEach(note => note._updateParam(time));
-  }
-
-  setTempo(time, tempo) {
-    if (0 < tempo && tempo <= 1000) {
-      this.trackParams = {
-        ...this.trackParams,
-        tempo,
-      };
-      this.notes.forEach(note => note.updateTempo(time, tempo));
-    } else {
-      throw new Error('Tempo must be within range (0, 1000]');
-    }
   }
 
   update(time) {
@@ -125,12 +121,15 @@ class Note {
       }
     });
   }
+}
 
-  updateTempo(time) {
-    const params = {
-      ...this.synth.trackParams,
-      ...this.noteParams,
-    };
-    this.allNodes.forEach(node => node.updateTempo(time, params));
+function mapParams(params, map) {
+  const newParams = {...params};
+  for (const key in params) {
+    if (key in map) {
+      newParams[map[key]] = params[key];
+      delete newParams[key];
+    }
   }
+  return newParams;
 }

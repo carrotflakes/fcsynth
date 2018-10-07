@@ -3,10 +3,13 @@ const masterGain = ac.createGain();
 masterGain.gain.value = 0.5;
 masterGain.connect(ac.destination);
 
+const nameMap = {
+  f: fcsynth.frequency,
+  tempo: fcsynth.tempo,
+};
+const sb = new fcsynth.SynthBuilder(ac, nameMap);
 function buildSynth(model, params) {
-  const sb = new fcsynth.SynthBuilder(ac);
   params = params || {
-    f: fcsynth.frequency,
     tempo: 120,
     y: 0.75,
     c1: 0,
@@ -17,7 +20,7 @@ function buildSynth(model, params) {
   return sb.build(model, masterGain, params);
 }
 
-let synth = buildSynth(fcsynth.makeDefaultModel('f', 'y'));
+let synth = buildSynth(fcsynth.makeDefaultModel('y'));
 
 {
   const note = synth.note({
@@ -53,7 +56,7 @@ gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
   },
   watch: {
     tempo(val) {
-      synth.setTempo(ac.currentTime + 0.1, +val);
+      synth.setTrackParam(ac.currentTime + 0.1, {tempo: +val});
     },
   },
   methods: {
@@ -112,7 +115,7 @@ gain(adsr(y,10,100,0.5,100))<-sin(fr(freq)<-(m1+m2))
       }
     },
     applyModel() {
-      synth = buildSynth(fcsynth.source2model(this.model), synth.trackParams);
+      synth = buildSynth(sb.source2model(this.model), synth.trackParams);
     },
     toggleMode() {
       this.analyserMode = (this.analyserMode + 1) % 3;
