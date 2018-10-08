@@ -103,6 +103,9 @@ function buildNode(model, scope) {
     case 'value':
       return model;
     case 'identifier':
+      if (!(model.identifier in scope)) {
+        throw new Error(`identifier '${model.identifier}' is not defined`);
+      }
       return scope[model.identifier];
   }
 }
