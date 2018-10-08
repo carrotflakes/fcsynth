@@ -34,7 +34,6 @@ export class Filter extends Node {
 
   collectNodes() {
     const nodes = [
-      this,
       ...this.child.collectNodes()
     ];
     if (this.freqCtrl) {
@@ -52,6 +51,7 @@ export class Filter extends Node {
         ...this.gainCtrl.envelope.collectNodes(),
         ...this.gainCtrl.modulator.collectNodes());
     }
+    nodes.push(this);
     return nodes;
   }
 

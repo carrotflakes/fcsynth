@@ -63,9 +63,9 @@ export class SimpleOscillator extends Node {
 
   collectNodes() {
     return [
-      this,
       ...this.frequencyCtrl.envelope.collectNodes(),
-      ...this.frequencyCtrl.modulator.collectNodes()
+      ...this.frequencyCtrl.modulator.collectNodes(),
+      this,
     ];
   }
 
@@ -94,10 +94,10 @@ export class Gain extends Node {
 
   collectNodes() {
     return [
-      this,
       ...this.child.collectNodes(),
       ...this.gainCtrl.envelope.collectNodes(),
-      ...this.gainCtrl.modulator.collectNodes()
+      ...this.gainCtrl.modulator.collectNodes(),
+      this,
     ];
   }
 

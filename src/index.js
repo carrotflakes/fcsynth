@@ -36,7 +36,7 @@ class Synth {
   note(noteParams) {
     const {allNodes, criticalEnvelopes, rootNode} =
       buildNodes(this.model, this.allParamNames);
-    allNodes.reverse().forEach(n => n.activate(this.ac)); // reverse?
+    allNodes.forEach(n => n.activate(this.ac)); // allNodes must be sorted in order of activation.
     rootNode.connect(this.destination);
     noteParams = mapParams(noteParams, this.nameMap);
     const note = new Note(this, allNodes, criticalEnvelopes, noteParams);
