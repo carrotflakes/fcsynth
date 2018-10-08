@@ -111,6 +111,10 @@ export default class Scheduler {
       return this.points[i - 1].value;
     }
 
+    if (this.points[i].time === time) {
+      return this.points[i].value;
+    }
+
     const left = this.points[i-1];
     const right = this.points[i];
     let value;
