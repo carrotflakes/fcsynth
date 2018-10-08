@@ -92,7 +92,7 @@ function transform(ast, nameMap) {
           return {
             type: 'filter',
             filterType: {lpf: "lowpass", hpf: "highpass", bpf: "bandpass", ncf: "notch", apf: "allpass"}[ast.func],
-            frequency: transform(ast.arguments[0]), nameMap,
+            frequency: transform(ast.arguments[0], nameMap),
             Q: transform(ast.arguments[1], nameMap),
             child: []
           };
